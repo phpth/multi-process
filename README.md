@@ -62,3 +62,15 @@ $p->waitExecutor($e, true ,1.9, function(int $idx, array $status, $append_param1
 }, ['$append_param1', '$append_param2']);
 
 ```
+
+
+> in normal main process exited set child process stop
+```php
+include dirname(__DIR__) . '/src/autoload.php';
+use phpth\process\Process;
+use phpth\process\supply\Options;
+$p = new Process();
+$p->stop_child_on_exit = true;
+// open your child process code
+
+```

@@ -134,6 +134,7 @@ class Process
         if($dp < 0){
             throw new ProcessException("demonize failed: ".pcntl_strerror(pcntl_errno()));
         }
+        $this->demonize = true;
         if($dp > 0){
             exit ;
         }
