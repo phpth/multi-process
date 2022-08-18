@@ -1,7 +1,7 @@
 {
   "name": "phpth/multi-process",
   "description": "multi process by pcntl extension",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "authors": [
     {
       "name": "js",
@@ -14,7 +14,6 @@
   "minimum-stability": "stable",
   "require": {
     "php":">=7.4",
-    "ext-json": "*",
     "ext-pcntl": "*",
     "ext-posix": "*"
   },

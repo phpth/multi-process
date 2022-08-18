@@ -1,6 +1,11 @@
 # multi-process
 open multi process by pcntl
 
+> install package by composer
+```bash
+composer require phpth/multi-process
+```
+
 > simple samples
 ```php
 include dirname(__DIR__) . '/src/autoload.php';
