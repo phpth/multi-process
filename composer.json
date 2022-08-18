@@ -1,7 +1,7 @@
 {
   "name": "phpth/multi-process",
   "description": "multi process by pcntl extension",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "authors": [
     {
       "name": "js",
