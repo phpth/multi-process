@@ -15,6 +15,10 @@
 
 namespace phpth\process;
 
+use phpth\process\exception\CallException;
+use phpth\process\exception\ExecutorException;
+use phpth\process\exception\ProcessException;
+use phpth\process\exception\RunnerException;
 use phpth\process\supply\Call;
 use phpth\process\supply\Executor;
 
@@ -27,31 +31,33 @@ class Process
     public ?string $output = null;
     public Call $call;
     public Executor $executor;
+    private bool $demonize = false;
 
     /**
      * @param string|null $name
      * @param int $priority
-     * @param int|null    $restart_by
+     * @param int|null $restart_by
      * @param string|null $output
      */
-    public function __construct(?string $name = null, int $priority = 0, ?int $restart_by = null, ?string $output = null){
+    public function __construct(?string $name = null, int $priority = 0, ?int $restart_by = null, ?string $output = null)
+    {
         $this->priority = $priority;
         $this->name = $name;
         $this->output = $output;
-        $restart_by === null?: $this->restart_by = $restart_by;
+        $restart_by === null ?: $this->restart_by = $restart_by;
     }
 
     /**
-     * @param callable    $c
-     * @param array       $param
-     * @param int|null    $num
+     * @param callable $c
+     * @param array $param
+     * @param int|null $num
      * @param string|null $name
-     * @param int|null    $priority
-     * @param int|null    $restart_by
+     * @param int|null $priority
+     * @param int|null $restart_by
      *
-     * @return \phpth\process\supply\Executor
-     * @throws \phpth\process\exception\ExecutorException
-     * @throws \phpth\process\exception\RunnerException
+     * @return Executor
+     * @throws ExecutorException
+     * @throws RunnerException
      */
     public function runCall(callable $c, array $param = [], ?int $num = 1, ?string $name = null, ?int $priority = null, ?int $restart_by = null): Executor
     {
@@ -61,7 +67,7 @@ class Process
             $num,
             $priority,
             $name,
-            $restart_by===null? $this->restart_by: $restart_by,
+            $restart_by === null ? $this->restart_by : $restart_by,
         );
         $e = new Executor($call, $this->name, $this->priority, $this->output);
         $e->stop_child_on_exit = $this->stop_child_on_exit;
@@ -72,10 +78,10 @@ class Process
     /**
      * @param array[] $c_arr
      *
-     * @return \phpth\process\supply\Executor
-     * @throws \phpth\process\exception\CallException
-     * @throws \phpth\process\exception\ExecutorException
-     * @throws \phpth\process\exception\RunnerException
+     * @return Executor
+     * @throws CallException
+     * @throws ExecutorException
+     * @throws RunnerException
      */
     public function runMultiCall(array $c_arr): Executor
     {
@@ -95,18 +101,46 @@ class Process
      * @param array $call_func_param
      *
      * @return void
-     * @throws \phpth\process\exception\ExecutorException
-     * @throws \phpth\process\exception\RunnerException
+     * @throws ExecutorException
+     * @throws RunnerException
      */
     public function waitExecutor(Executor $e, bool $block = true, float $interval = 0.9, ?callable $call_func_on_child_exit = null, array $call_func_param = [])
     {
-        if(!$e->inRun()){
+        if (!$e->inRun()) {
             $e->start();
         }
-        foreach($e->wait($block, $interval) as $k=> $v){
-            if($v && $v['pid']>0 && is_callable($call_func_on_child_exit)){
+        foreach ($e->wait($block, $interval) as $k => $v) {
+            if ($v && $v['pid'] > 0 && is_callable($call_func_on_child_exit)) {
                 $call_func_on_child_exit($k, $v, ...$call_func_param);
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function inDemonize(): bool
+    {
+        return $this->demonize;
+    }
+
+    /**
+     * @return $this
+     * @throws ProcessException
+     */
+    public function demonize(): self
+    {
+        $dp = pcntl_fork();
+        if($dp < 0){
+            throw new ProcessException("demonize failed: ".pcntl_strerror(pcntl_errno()));
+        }
+        if($dp > 0){
+            exit ;
+        }
+        $sid = posix_setsid();
+        if($sid < 0){
+            throw new ProcessException("error in daemonize");
+        }
+        return $this;
     }
 }

@@ -90,7 +90,7 @@ class Runner
      */
     public function run(): self
     {
-        if($this->pid){
+        if ($this->pid) {
             throw new RunnerException("there be runner for callable, please wait or call wait child process");
         }
         $this->pid = pcntl_fork();
@@ -200,7 +200,7 @@ class Runner
         if ($this->pid > 0) {
             $res['pid'] = pcntl_waitpid($this->pid, $status, $block ? WUNTRACED : WNOHANG | WUNTRACED);
             Runner::getStatus($status, $res);
-            if($res['pid'] > 0){
+            if ($res['pid'] > 0) {
                 $this->pid = 0;
             }
         }
@@ -289,7 +289,7 @@ class Runner
     public function close()
     {
         // main process exit will send SIGTERM signal to child
-        if($this->stop_by_main_process_exit){
+        if ($this->stop_by_main_process_exit) {
             $this->stop();
         }
     }

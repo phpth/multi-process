@@ -35,18 +35,18 @@ class Call
     protected array $calls = [];
 
     /**
-     * @param callable    $call
-     * @param array|null  $param
-     * @param int|null    $num  0, null for one call process
-     * @param int|null    $priority
+     * @param callable $call
+     * @param array|null $param
+     * @param int|null $num 0, null for one call process
+     * @param int|null $priority
      * @param string|null $name
-     * @param int|null    $restart_by if child process exit, how to do. default restart all exit child process
+     * @param int|null $restart_by if child process exit, how to do. default restart all exit child process
      *
      * @return $this
      */
     public function add(callable $call, ?array $param = [], ?int $num = 1, ?int $priority = 0, ?string $name = '', ?int $restart_by = Call::EXIT_ALL): self
     {
-        $name = Call::getCallName($call, $param?:[], $name);
+        $name = Call::getCallName($call, $param ?: [], $name);
         $num = $num === null ? 1 : max($num, 1);
         for ($i = 0; $i < $num; $i++) {
             $this->calls[] = [
@@ -54,7 +54,7 @@ class Call
                 'call' => $call,
                 'param' => $param ?: [],
                 'priority' => $priority ?: 0,
-                'restart_by' => $restart_by === null? Call::EXIT_ALL: $restart_by,
+                'restart_by' => $restart_by === null ? Call::EXIT_ALL : $restart_by,
             ];
         }
         return $this;

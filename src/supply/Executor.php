@@ -17,6 +17,7 @@ namespace phpth\process\supply;
 
 use phpth\process\exception\ExecutorException;
 use Generator;
+use phpth\process\exception\RunnerException;
 
 class Executor
 {
@@ -93,12 +94,12 @@ class Executor
 
     /**
      * @return $this
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     /**
      * @return $this
      * @throws ExecutorException
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     public function start(): Executor
     {
@@ -115,7 +116,7 @@ class Executor
      * @param float $interval
      *
      * @return Generator
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     public function wait(bool $block = true, float $interval = 0.5): Generator
     {
@@ -189,7 +190,7 @@ class Executor
      * @param bool $force
      *
      * @return void
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     public function stop(bool $force = false)
     {
@@ -225,7 +226,7 @@ class Executor
      * @param int $signal
      *
      * @return void
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     public function signalHandle(int $signal)
     {
@@ -257,7 +258,7 @@ class Executor
 
     /**
      * @return void
-     * @throws \phpth\process\exception\RunnerException
+     * @throws RunnerException
      */
     protected function runChild()
     {
