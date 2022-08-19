@@ -121,7 +121,7 @@ class Call
             if (empty($call['call']) || !is_callable($call['call'])) {
                 throw new CallException("not callable for index $k");
             }
-            $this->add($call['call'], $call['param'] ?? null, $call['num'] ?? null, $call['priority'] ?? null, $call['name'] ?? null, $call['run_times'] ?? null);
+            $this->add($call['call'], $call['param'] ?? null, $call['num'] ?? null, $call['priority'] ?? null, $call['name'] ?? null, $call['restart_by'] ?? null);
         }
         return $this;
     }

@@ -21,6 +21,7 @@ use phpth\process\exception\ProcessException;
 use phpth\process\exception\RunnerException;
 use phpth\process\supply\Call;
 use phpth\process\supply\Executor;
+use phpth\process\supply\Wait;
 
 class Process
 {
@@ -94,6 +95,36 @@ class Process
     }
 
     /**
+     * @param callable $c
+     * @param array $param
+     * @param int|null $num
+     * @param string|null $name
+     * @param int|null $priority
+     * @param int|null $restart_by
+     *
+     * @return Wait
+     * @throws ExecutorException
+     * @throws RunnerException
+     */
+    public function runCallWait(callable $c, array $param = [], ?int $num = 1, ?string $name = null, ?int $priority = null, ?int $restart_by = null): Wait
+    {
+        return new Wait($this->runCall($c, $param, $num, $name, $priority, $restart_by));
+    }
+
+    /**
+     * @param array[] $c_arr
+     *
+     * @return Wait
+     * @throws CallException
+     * @throws ExecutorException
+     * @throws RunnerException
+     */
+    public function runMultiCallWait(array $c_arr): Wait
+    {
+        return new Wait($this->runMultiCall($c_arr));
+    }
+
+    /**
      * @param Executor $e
      * @param bool $block
      * @param float $interval
@@ -106,14 +137,8 @@ class Process
      */
     public function waitExecutor(Executor $e, bool $block = true, float $interval = 0.9, ?callable $call_func_on_child_exit = null, array $call_func_param = [])
     {
-        if (!$e->inRun()) {
-            $e->start();
-        }
-        foreach ($e->wait($block, $interval) as $k => $v) {
-            if ($v && $v['pid'] > 0 && is_callable($call_func_on_child_exit)) {
-                $call_func_on_child_exit($k, $v, ...$call_func_param);
-            }
-        }
+        $wait = new Wait($e);
+        $wait->wait($block, $interval, $call_func_on_child_exit, $call_func_param);
     }
 
     /**
