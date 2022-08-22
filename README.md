@@ -145,3 +145,57 @@ $wait->wait(true, 1.9, function(int $idx, array $status, $append_param1, $append
 },  ['append_param1', 'append_param2']);
 
 ```
+
+>  process use ipc queue[^1]
+
+```php
+include dirname(__DIR__).'/src/autoload.php';
+
+use phpth\process\Process;
+use phpth\process\supply\Call;
+
+$key   = 'test';
+$queue = Process::getIpcQueue($key);
+for($i = 1; $i <= 10; $i++) {
+    $queue->push($i);
+}
+
+$p = new Process();
+$p->runMultiCallWait([
+    [
+        'call'       => function () use ($key) {
+            $queue = Process::getIpcQueue($key);
+            try {
+                while(true) {
+                    echo 'child[ddd], pop data: '.$queue->pop().PHP_EOL;
+                    sleep(1);
+                }
+            } catch(Throwable $e) {
+                echo 'process name[ddd]: queue is empty'.PHP_EOL;
+            }
+        },
+        'name'       => 'ddd',
+        'restart_by' => Call::EXIT_NO_START,
+    ],
+    [
+        'call'       => function () use ($key) {
+            $queue = Process::getIpcQueue($key);
+            try {
+                while(true) {
+                    echo 'child[ccc], pop data: '.$queue->pop().PHP_EOL;
+                    sleep(1);
+                }
+            } catch(Throwable $e) {
+                echo 'process name[ccc]: queue is empty'.PHP_EOL;
+            }
+        },
+        'name'       => 'ccc',
+        'restart_by' => Call::EXIT_NO_START,
+    ],
+])->wait(true, 1.9, function (int $idx, array $status, $append_param1, $append_param2) {
+    echo 'idx: ', var_export($status, true), $idx, ' - ', $append_param1, ' - ', $append_param2, PHP_EOL;
+}, ['append_param1', 'append_param2']);
+$queue->remove();
+```
+
+[^1]: <font color="red" size=5> you must open sysvmsg extension for use ipc queue before</font>

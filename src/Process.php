@@ -19,6 +19,7 @@ use phpth\process\exception\CallException;
 use phpth\process\exception\ExecutorException;
 use phpth\process\exception\ProcessException;
 use phpth\process\exception\RunnerException;
+use phpth\process\ipc\Queue;
 use phpth\process\supply\Call;
 use phpth\process\supply\Executor;
 use phpth\process\supply\Wait;
@@ -168,5 +169,16 @@ class Process
             throw new ProcessException("error in daemonize");
         }
         return $this;
+    }
+
+    /**
+     * @param string $path_key
+     *
+     * @return Queue
+     * @throws exception\IpcException
+     */
+    public static function getIpcQueue(string $path_key): Queue
+    {
+        return new Queue($path_key);
     }
 }
