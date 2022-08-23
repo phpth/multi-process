@@ -173,12 +173,13 @@ class Process
 
     /**
      * @param string $path_key
+     * @param bool|null $exception_on_set_opt_failed
      *
      * @return Queue
      * @throws exception\IpcException
      */
-    public static function getIpcQueue(string $path_key): Queue
+    public static function getIpcQueue(string $path_key, ?bool $exception_on_set_opt_failed = null): Queue
     {
-        return new Queue($path_key);
+        return new Queue($path_key, null, $exception_on_set_opt_failed);
     }
 }

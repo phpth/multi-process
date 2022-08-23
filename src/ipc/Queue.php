@@ -22,6 +22,11 @@ class Queue
     public const IPC_MSG_TYPE = 1;
 
     /**
+     * @var bool in some system or not –privileged container, set opt will fail, use this option to ignore exception
+     */
+    public bool $exception_on_set_opt_failed = false;
+
+    /**
      * @var resource|SysvMessageQueue
      */
     protected $queue;
@@ -39,11 +44,15 @@ class Queue
     /**
      * @param string $path_key
      * @param Opt|null $opt
+     * @param bool|null $exception_on_set_opt_failed
      *
      * @throws IpcException
      */
-    public function __construct (string $path_key, ?Opt $opt = null)
+    public function __construct (string $path_key, ?Opt $opt = null, ?bool $exception_on_set_opt_failed = null)
     {
+        if($exception_on_set_opt_failed !== null){
+            $this->exception_on_set_opt_failed = $exception_on_set_opt_failed;
+        }
         if(!$path_key){
             throw new IpcException("path key can't empty");
         }
@@ -78,12 +87,12 @@ class Queue
     }
 
     /**
-     * @param opt $opt
+     * @param Opt $opt
      *
      * @return void
      * @throws IpcException
      */
-    public function opt(opt $opt)
+    public function opt(Opt $opt)
     {
         $this->opt = $opt;
         $opt_arr = [];
@@ -105,7 +114,7 @@ class Queue
         Opt::errHdl();
         $r = msg_set_queue($this->queue, $opt_arr);
         restore_error_handler();
-        if(!$r){
+        if($this->exception_on_set_opt_failed && !$r){
             throw new IpcException("error set queue opt");
         }
     }
