@@ -27,7 +27,7 @@ class Queue
     public bool $exception_on_set_opt_failed = false;
 
     /**
-     * @var resource|SysvMessageQueue
+     * @var false|SysvMessageQueue
      */
     protected $queue;
 
@@ -167,11 +167,7 @@ class Queue
      */
     public function remove (?string $path_key = '', ?int $id = null): bool
     {
-        if(!$path_key && !$id){
-            $queue = $this->queue;
-        }
-
-
+        $queue = $this->queue;
         if($path_key){
             $id = Opt::getId($path_key);
             if(!msg_queue_exists($id)){
@@ -236,7 +232,7 @@ class Queue
      * @param int $id
      * @param int $per
      *
-     * @return false|resource
+     * @return false|SysvMessageQueue
      * @throws IpcException
      */
     protected function getQueue(int $id, int $per = 0666)

@@ -251,7 +251,7 @@ class Executor
      * @return mixed
      * @throws ExecutorException
      */
-    public function errorHandle($e_no, $e_str, $e_file, $e_line)
+    public function errorHandle($e_no, $e_str, $e_file, $e_line):mixed
     {
         throw new ExecutorException("$e_str in file $e_file:$e_line", $e_no);
     }
