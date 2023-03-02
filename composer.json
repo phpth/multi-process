@@ -1,0 +1,33 @@
+{
+  "name": "phpth/multi-process",
+  "description": "multi process by pcntl extension",
+  "version": "3.3.5",
+  "authors": [
+    {
+      "name": "js",
+      "email": "vvvog@foxmail.com"
+    }
+  ],
+  "type": "package",
+  "homepage": "https://github.com/phpth/multi-process",
+  "license": "Apache-2.0",
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=8.0",
+    "ext-pcntl": "*",
+    "ext-posix": "*"
+  },
+  "suggest": {
+    "ext-sysvmsg": "*"
+  },
+  "keywords": [
+    "pcntl",
+    "process",
+    "multi process"
+  ],
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}
