@@ -114,7 +114,7 @@ class Call
             $n_str === null ? $p_str .= ",$type" : $p_str .= ",$type:$n_str";
         }
         $p_str = '[' . trim($p_str, ',') . ']';
-        $name = "$name: $p_str";
+        $name = "$name%s: $p_str";
         end:
         return $name;
     }

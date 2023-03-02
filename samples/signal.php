@@ -14,18 +14,16 @@ pcntl_async_signals(true);
 
 
 $a = function ():Generator{
-    for($i=0;$i<=10;$i++){
-        echo $i.PHP_EOL;
-        sleep(1);
-
-    }
-    if(0){
-        yield $i;
-    }
+    yield "signal".PHP_EOL;
 };
+$mainPid = getmypid();
 $pid = pcntl_fork();
 if(!$pid){
-    sleep(5);
+    sleep(2);
+    echo "send signal".PHP_EOL;
+    for($i = 0; $i<=50; $i++){
+        posix_kill($mainPid, SIGCHLD);
+    }
     die();
 }
 pcntl_signal(SIGTERM, function ()use($a){
@@ -38,8 +36,8 @@ pcntl_signal(SIGCHLD, function ()use($a){
     $a()->current();
 });
 
-for($i = 0; $i<=10; $i++){
-    echo "send signal".PHP_EOL;
-    posix_kill(getmypid(), SIGTERM);
+while (true){
+    echo 'wait'.PHP_EOL;
     sleep(1);
 }
+

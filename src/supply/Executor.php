@@ -311,7 +311,7 @@ class Executor
             $this->calls[$processNo]['call'],
             [$processNo, $this->calls[$processNo]['param']],
             $this->calls[$processNo]['priority'],
-            $this->calls[$processNo]['name'],
+            $this->calls[$processNo]['name']? sprintf($this->calls[$processNo]['name'], " $processNo"): '',
             $this->mainPid,
             is_string($this->output) ? new Stdout($this->output, $processNo) : $this->output
         );
