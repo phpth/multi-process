@@ -307,11 +307,13 @@ class Executor
      */
     protected function createRunner(int $processNo): Runner
     {
+        $param = [$processNo, $this->calls[$processNo]['param']];
+        $name = Call::getCallName($this->calls[$processNo]['call'], $param, $this->calls[$processNo]['name']);
         return new Runner(
             $this->calls[$processNo]['call'],
-            [$processNo, $this->calls[$processNo]['param']],
+            $param,
             $this->calls[$processNo]['priority'],
-            $this->calls[$processNo]['name']? sprintf($this->calls[$processNo]['name'], " $processNo"): '',
+            $name,
             $this->mainPid,
             is_string($this->output) ? new Stdout($this->output, $processNo) : $this->output
         );

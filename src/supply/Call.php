@@ -47,7 +47,6 @@ class Call
      */
     public function add(callable $call, ?array $param = [], ?int $num = 1, ?int $priority = 0, ?string $name = '', ?int $child_restart = ChildRestart::EXIT_ANY): static
     {
-        $name = Call::getCallName($call, $param ?: [], $name);
         $processDataDispatch = false;
         if ($num === Call::PROCESS_DATA_DISPATCH) {
             if (!$param) {
@@ -74,10 +73,10 @@ class Call
      * @param callable $call
      * @param array $param
      * @param string|null $name
-     *
+     * @param int|null $processNo
      * @return string
      */
-    public static function getCallName(callable $call, array $param, ?string $name = ''): string
+    public static function getCallName(callable $call, array $param, ?string $name = '', ?int $processNo = null): string
     {
         if ($name === null) {
             $name = '';
@@ -114,7 +113,7 @@ class Call
             $n_str === null ? $p_str .= ",$type" : $p_str .= ",$type:$n_str";
         }
         $p_str = '[' . trim($p_str, ',') . ']';
-        $name = "$name%s: $p_str";
+        $name = sprintf("$name%s: $p_str", $processNo);
         end:
         return $name;
     }

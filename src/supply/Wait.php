@@ -44,9 +44,10 @@ class Wait
         if (!$this->e->inRun()) {
             $this->e->start();
         }
-        foreach ($this->e->wait($block, $interval) as $k => $v) {
-            if ($v && $v['pid'] > 0 && is_callable($call_func_on_child_exit)) {
-                $call_func_on_child_exit($k, $v, ...$call_func_param);
+        /**@var Status $status*/
+        foreach ($this->e->wait($block, $interval) as $processNo => $status) {
+            if ($status && $status->run && is_callable($call_func_on_child_exit)) {
+                $call_func_on_child_exit($processNo, $status, ...$call_func_param);
             }
         }
     }
